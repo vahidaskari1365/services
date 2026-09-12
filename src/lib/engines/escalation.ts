@@ -177,7 +177,7 @@ export async function runEscalationEngine(tenantId: string): Promise<EngineRunRe
   // ─── ۳) تراز مصالح: آلارم مسدودی تسویه ───
   const materialContracts = await db.contract.findMany({
     where: { tenantId, type: "WITH_MATERIALS", status: "ACTIVE" },
-    include: { project: true, phases: true, balances: true, materialItems: true, workLogs: { where: { status: "APPROVED" }, orderBy: { date: "desc" }, take: 1 } },
+    include: { project: { include: { phases: true } }, balances: true, materialItems: true, workLogs: { where: { status: "APPROVED" }, orderBy: { date: "desc" }, take: 1 } },
   });
 
   for (const contract of materialContracts) {
@@ -188,7 +188,7 @@ export async function runEscalationEngine(tenantId: string): Promise<EngineRunRe
 
     const balanceItemIds = new Set(contract.balances.map((b) => `${b.materialItemId}__${b.phaseId}`));
     const missing = contract.materialItems.some((item) =>
-      contract.phases.some((p) => !balanceItemIds.has(`${item.id}__${p.id}`))
+      contract.project.phases.some((p) => !balanceItemIds.has(`${item.id}__${p.id}`))
     );
     if (!missing) continue;
 

@@ -47,7 +47,11 @@ bun run dev                 # http://localhost:3000
    - ✅ ۳۲ جدول + کلیدهای خارجی + ایندکس‌ها + Row Level Security ساخته می‌شود.
 4. تمام! 🎉 **داده‌های دمو خودکار ساخته می‌شوند** — در اولین لاگین، اگر دیتابیس خالی باشد،
    سیستم به‌صورت خودکار کاربران دمو و داده‌های نمونه را می‌سازد (Auto-Seed).
-   - اگر بازهم خواستید دستی سید کنید:
+   - اگر بازهم خواستید دستی سید کنید — بدون نیاز به رمز دیتابیس، فقط با کلید `sb_secret`:
+   ```bash
+   node scripts/seed-supabase-rest.mjs   # (کلیدها در .env.seeder)
+   ```
+   - یا با اتصال مستقیم Prisma:
    ```bash
    DATABASE_URL="postgresql://postgres.kioqbtldumiuwkfdclhn:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres" \
    bunx prisma generate --schema prisma/schema.postgres.prisma && bun scripts/seed.ts

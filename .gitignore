@@ -75,3 +75,4 @@ server.log
 /mini-services/
 # allow example env
 !.env.example
+.env.seeder
