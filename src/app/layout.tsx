@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "مپ‌پی‌ام‌اس | سامانه مدیریت پروژه و اتوماسیون تأسیسات",
@@ -31,8 +32,15 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-background text-foreground font-vazir">
-        {children}
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

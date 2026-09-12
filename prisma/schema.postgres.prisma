@@ -1,0 +1,495 @@
+// MEP-PMS database schema - based on SOW ERD (SQLite, no enums: use String + TS constants)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  users     User[]
+  roles     Role[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  tenantId     String
+  username     String   @unique
+  passwordHash String
+  fullName     String
+  roleId       String
+  personId     String?  @unique
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+  role         Role     @relation(fields: [roleId], references: [id])
+  person       Person?  @relation(fields: [personId], references: [id])
+  notifications Notification[]
+  auditLogs    AuditLog[]
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  tenantId    String
+  key         String   @unique
+  name        String
+  description String   @default("")
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  users       User[]
+  permissions Permission[] @relation("RolePermissions")
+}
+
+model Permission {
+  id     String @id @default(cuid())
+  key    String @unique
+  name   String
+  module String
+  roles  Role[] @relation("RolePermissions")
+}
+
+model Person {
+  id             String   @id @default(cuid())
+  tenantId       String
+  type           String
+  fullName       String
+  phone          String
+  nationalId     String   @default("")
+  address        String   @default("")
+  marketerCode   String   @default("")
+  notes          String   @default("")
+  defaultPercent Float?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  user                    User?
+  guaranteeChecks         GuaranteeCheck[]
+  teamsLed                Team[]           @relation("TeamLeader")
+  memberships             TeamMember[]
+  projectsAsEmployer      Project[]        @relation("ProjectEmployer")
+  projectsAsSupervisor    Project[]        @relation("ProjectSupervisor")
+  contractsAsMarketer     Contract[]       @relation("ContractMarketer")
+  tasksAssigned           Task[]           @relation("TaskAssignee")
+  workLogsAsPerson        WorkLog[]        @relation("WorkLogPerson")
+  commissions             Commission[]     @relation("CommissionMarketer")
+}
+
+model GuaranteeCheck {
+  id               String    @id @default(cuid())
+  tenantId         String
+  personId         String
+  checkNumber      String
+  amount           Float
+  bankName         String    @default("")
+  dueDate          DateTime
+  status           String    @default("VALID")
+  warn30NotifiedAt DateTime?
+  warn15NotifiedAt DateTime?
+  lockedNotifiedAt DateTime?
+  notes            String    @default("")
+  createdAt        DateTime  @default(now())
+  person           Person    @relation(fields: [personId], references: [id])
+}
+
+model Team {
+  id            String   @id @default(cuid())
+  tenantId      String
+  name          String
+  leaderId      String?
+  serviceLineId String?
+  isLocked      Boolean  @default(false)
+  lockReason    String   @default("")
+  notes         String   @default("")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  leader        Person?      @relation("TeamLeader", fields: [leaderId], references: [id])
+  serviceLine   ServiceLine? @relation(fields: [serviceLineId], references: [id])
+  members       TeamMember[]
+  workLogs      WorkLog[]
+  payouts       Payout[]
+}
+
+model TeamMember {
+  id       String @id @default(cuid())
+  teamId   String
+  personId String
+  role     String @default("MEMBER")
+  team     Team   @relation(fields: [teamId], references: [id])
+  person   Person @relation(fields: [personId], references: [id])
+}
+
+model ServiceLine {
+  id       String  @id @default(cuid())
+  tenantId String
+  name     String
+  code     String  @default("")
+  isActive Boolean @default(true)
+  projects Project[]
+  teams    Team[]
+}
+
+model Project {
+  id            String    @id @default(cuid())
+  tenantId      String
+  name          String
+  code          String    @default("")
+  employerId    String?
+  supervisorId  String?
+  serviceLineId String?
+  address       String    @default("")
+  status        String    @default("ACTIVE")
+  startDate     DateTime?
+  endDate       DateTime?
+  budget        Float?
+  notes         String    @default("")
+  createdAt     DateTime  @default(now())
+  employer      Person?      @relation("ProjectEmployer", fields: [employerId], references: [id])
+  supervisor    Person?      @relation("ProjectSupervisor", fields: [supervisorId], references: [id])
+  serviceLine   ServiceLine? @relation(fields: [serviceLineId], references: [id])
+  contracts     Contract[]
+  phases        Phase[]
+  tasks         Task[]
+  workLogs      WorkLog[]
+}
+
+model Phase {
+  id        String    @id @default(cuid())
+  projectId String
+  title     String
+  order     Int       @default(0)
+  status    String    @default("PENDING")
+  startDate DateTime?
+  endDate   DateTime?
+  project   Project   @relation(fields: [projectId], references: [id])
+  workLogs  WorkLog[]
+  balances  MaterialBalance[]
+}
+
+model Contract {
+  id          String    @id @default(cuid())
+  tenantId    String
+  projectId   String
+  type        String    @default("WAGE")
+  signingMode String    @default("SINGLE")
+  title       String
+  amount      Float     @default(0)
+  marketerId  String?
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String    @default("ACTIVE")
+  notes       String    @default("")
+  createdAt   DateTime  @default(now())
+  project       Project               @relation(fields: [projectId], references: [id])
+  marketer      Person?               @relation("ContractMarketer", fields: [marketerId], references: [id])
+  installments  ContractInstallment[]
+  materialItems MaterialItem[]
+  receipts      MaterialReceipt[]
+  balances      MaterialBalance[]
+  workLogs      WorkLog[]
+  payouts       Payout[]
+  commissions   Commission[]
+}
+
+model ContractInstallment {
+  id              String    @id @default(cuid())
+  tenantId        String
+  contractId      String
+  title           String
+  amount          Float
+  dueDate         DateTime
+  status          String    @default("PENDING")
+  paidAt          DateTime?
+  paymentId       String?
+  escalationStage Int       @default(0)
+  sms1SentAt      DateTime?
+  sms2SentAt      DateTime?
+  escalatedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  contract     Contract         @relation(fields: [contractId], references: [id])
+  payments     Payment[]
+  paymentLinks PaymentLink[]
+}
+
+model MaterialItem {
+  id         String @id @default(cuid())
+  tenantId   String
+  contractId String
+  name       String
+  unit       String @default("adad")
+  unitPrice  Float  @default(0)
+  plannedQty Float  @default(0)
+  contract     Contract          @relation(fields: [contractId], references: [id])
+  balances     MaterialBalance[]
+  receipts     MaterialReceipt[]
+}
+
+model MaterialReceipt {
+  id             String   @id @default(cuid())
+  tenantId       String
+  contractId     String
+  materialItemId String
+  qty            Float
+  receivedAt     DateTime @default(now())
+  note           String   @default("")
+  contract       Contract     @relation(fields: [contractId], references: [id])
+  materialItem   MaterialItem @relation(fields: [materialItemId], references: [id])
+}
+
+model MaterialBalance {
+  id             String   @id @default(cuid())
+  tenantId       String
+  contractId     String
+  phaseId        String
+  materialItemId String
+  recordedById   String?
+  consumedQty    Float    @default(0)
+  surplusQty     Float    @default(0)
+  shortageQty    Float    @default(0)
+  notes          String   @default("")
+  recordedAt     DateTime @default(now())
+  contract       Contract     @relation(fields: [contractId], references: [id])
+  phase          Phase        @relation(fields: [phaseId], references: [id])
+  materialItem   MaterialItem @relation(fields: [materialItemId], references: [id])
+}
+
+model Task {
+  id                String    @id @default(cuid())
+  tenantId          String
+  projectId         String
+  contractId        String?
+  assigneePersonId  String?
+  title             String
+  description       String    @default("")
+  dueDate           DateTime
+  status            String    @default("TODO")
+  priority          String    @default("NORMAL")
+  isBottleneck      Boolean   @default(false)
+  dueSoonNotifiedAt DateTime?
+  overdueNotifiedAt DateTime?
+  escalated         Boolean   @default(false)
+  completedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  project           Project   @relation(fields: [projectId], references: [id])
+  assigneePerson    Person?   @relation("TaskAssignee", fields: [assigneePersonId], references: [id])
+}
+
+model Approval {
+  id          String    @id @default(cuid())
+  tenantId    String
+  type        String
+  refId       String
+  title       String
+  amount      Float?
+  meta        String    @default("{}")
+  chainLevel  Int       @default(1)
+  requestedBy String?
+  status      String    @default("PENDING")
+  decidedBy   String?
+  decidedAt   DateTime?
+  note        String    @default("")
+  createdAt   DateTime  @default(now())
+}
+
+model WorkLog {
+  id             String    @id @default(cuid())
+  tenantId       String
+  projectId      String
+  contractId     String
+  phaseId        String?
+  personId       String?
+  teamId         String?
+  date           DateTime
+  description    String    @default("")
+  status         String    @default("PENDING")
+  tariffType     String    @default("FIXED")
+  baseAmount     Float     @default(0)
+  rate           Float     @default(0)
+  quantity       Float     @default(0)
+  extraUnits     Float     @default(0)
+  extraRate      Float     @default(0)
+  computedAmount Float     @default(0)
+  approvedById   String?
+  approvedAt     DateTime?
+  walletSettled  Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  project     Project  @relation(fields: [projectId], references: [id])
+  contract    Contract @relation(fields: [contractId], references: [id])
+  phase       Phase?   @relation(fields: [phaseId], references: [id])
+  person      Person?  @relation("WorkLogPerson", fields: [personId], references: [id])
+  team        Team?    @relation(fields: [teamId], references: [id])
+  evidences   WorkLogEvidence[]
+}
+
+model WorkLogEvidence {
+  id        String  @id @default(cuid())
+  workLogId String
+  kind      String
+  title     String  @default("")
+  value     String  @default("")
+  workLog   WorkLog @relation(fields: [workLogId], references: [id])
+}
+
+model PaymentLink {
+  id            String    @id @default(cuid())
+  token         String    @unique
+  tenantId      String
+  installmentId String?
+  title         String
+  amount        Float
+  payerName     String    @default("")
+  status        String    @default("ACTIVE")
+  createdAt     DateTime  @default(now())
+  paidAt        DateTime?
+  gatewayRef    String    @default("")
+  installment   ContractInstallment? @relation(fields: [installmentId], references: [id])
+}
+
+model Payment {
+  id               String    @id @default(cuid())
+  tenantId         String
+  installmentId    String?
+  paymentLinkId    String?
+  amount           Float
+  method           String    @default("GATEWAY")
+  status           String    @default("SUCCESS")
+  paidAt           DateTime  @default(now())
+  gatewayRef       String    @default("")
+  note             String    @default("")
+  accountingSynced Boolean   @default(false)
+  accountingRef    String    @default("")
+  installment      ContractInstallment? @relation(fields: [installmentId], references: [id])
+}
+
+model CommissionTier {
+  id        String @id @default(cuid())
+  tenantId  String
+  label     String
+  minAmount Float
+  maxAmount Float?
+  percent   Float
+  order     Int    @default(0)
+}
+
+model Commission {
+  id               String   @id @default(cuid())
+  tenantId         String
+  contractId       String
+  marketerId       String
+  contractAmount   Float
+  percent          Float
+  totalAmount      Float
+  signPart         Float    @default(0)
+  signPaid         Boolean  @default(false)
+  collectionTarget Float    @default(0)
+  collectionPaid   Float    @default(0)
+  status           String   @default("PENDING")
+  createdAt        DateTime @default(now())
+  contract Contract @relation(fields: [contractId], references: [id])
+  marketer Person   @relation("CommissionMarketer", fields: [marketerId], references: [id])
+}
+
+model Payout {
+  id             String    @id @default(cuid())
+  tenantId       String
+  type           String
+  contractId     String
+  teamId         String?
+  personId       String?
+  wageAmount     Float     @default(0)
+  deductions     Float     @default(0)
+  additions      Float     @default(0)
+  netAmount      Float     @default(0)
+  hardGatePassed Boolean   @default(false)
+  blockReason    String    @default("")
+  status         String    @default("REQUESTED")
+  requestedBy    String?
+  approvedBy     String?
+  approvedAt     DateTime?
+  paidAt         DateTime?
+  createdAt      DateTime  @default(now())
+  contract Contract @relation(fields: [contractId], references: [id])
+  team     Team?    @relation(fields: [teamId], references: [id])
+}
+
+model Escalation {
+  id           String    @id @default(cuid())
+  tenantId     String
+  kind         String
+  severity     String    @default("HIGH")
+  title        String
+  description  String    @default("")
+  refType      String    @default("")
+  refId        String?
+  assignedRole String    @default("SECRETARY")
+  status       String    @default("OPEN")
+  resultNote   String    @default("")
+  resultAt     DateTime?
+  createdAt    DateTime  @default(now())
+  callLogs     CallLog[]
+}
+
+model CallLog {
+  id             String    @id @default(cuid())
+  tenantId       String
+  escalationId   String
+  byUserId       String?
+  result         String
+  note           String    @default("")
+  nextFollowUpAt DateTime?
+  createdAt      DateTime  @default(now())
+  escalation     Escalation @relation(fields: [escalationId], references: [id])
+}
+
+model Notification {
+  id       String    @id @default(cuid())
+  tenantId String
+  userId   String?
+  channel  String    @default("IN_APP")
+  title    String
+  body     String
+  refType  String    @default("")
+  refId    String?
+  status   String    @default("SENT")
+  sentAt   DateTime  @default(now())
+  readAt   DateTime?
+  user     User?     @relation(fields: [userId], references: [id])
+}
+
+model SmsTemplate {
+  id       String  @id @default(cuid())
+  tenantId String
+  key      String  @unique
+  label    String
+  body     String
+  enabled  Boolean @default(true)
+}
+
+model Setting {
+  id       String @id @default(cuid())
+  tenantId String
+  key      String @unique
+  value    String @default("")
+  group    String @default("GENERAL")
+  label    String @default("")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  meta      String   @default("{}")
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}

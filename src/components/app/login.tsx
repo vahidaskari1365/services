@@ -104,7 +104,7 @@ export default function LoginView() {
                   autoComplete="current-password"
                 />
               </div>
-              {error && <p className="text-sm text-rose-600 bg-rose-50 rounded-lg px-3 py-2">{error}</p>}
+              {error && <p className="text-sm text-rose-600 dark:text-rose-400 bg-rose-500/10 rounded-lg px-3 py-2">{error}</p>}
               <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
                 {loading && <Loader2 className="w-4 h-4 ml-2 animate-spin" />}
                 ورود
@@ -122,7 +122,7 @@ export default function LoginView() {
                       setUsername(a.username);
                       setPassword("1234");
                     }}
-                    className="text-right rounded-xl border p-2.5 hover:border-emerald-400 hover:bg-emerald-50 transition-colors"
+                    className="text-right rounded-xl border p-2.5 hover:border-emerald-400 hover:bg-emerald-500/10 transition-colors"
                   >
                     <span className="block text-xs font-semibold">{a.label}</span>
                     <span className="block text-[10px] text-muted-foreground mt-0.5">{a.desc}</span>

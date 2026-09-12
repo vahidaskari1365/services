@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { api } from "./store";
 import { formatJalali } from "@/lib/jalali";
+import { ThemeToggle } from "./theme-toggle";
 import {
   Bell, Building2, ClipboardCheck, FolderKanban, LayoutDashboard, LogOut, Menu,
   Settings2, Users, Wallet, FileBarChart2, ListTodo, Inbox, Percent, Wrench,
@@ -97,7 +98,7 @@ function NotificationsBell() {
             <p className="text-xs text-muted-foreground text-center py-8">اعلانی وجود ندارد</p>
           ) : (
             items.map((n) => (
-              <div key={n.id} className={`px-3 py-2.5 border-b last:border-0 ${n.status === "SENT" ? "bg-emerald-50/50" : ""}`}>
+              <div key={n.id} className={`px-3 py-2.5 border-b last:border-0 ${n.status === "SENT" ? "bg-emerald-500/10" : ""}`}>
                 <p className="text-xs font-semibold">{n.title}</p>
                 <p className="text-[11px] text-muted-foreground mt-0.5 leading-5">{n.body}</p>
                 <p className="text-[10px] text-muted-foreground/70 mt-1">{formatJalali(n.sentAt, true)}</p>
@@ -215,6 +216,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               </div>
             </div>
             <div className="flex items-center gap-1.5">
+              <ThemeToggle />
               <NotificationsBell />
               <Button variant="ghost" size="icon" className="lg:hidden text-muted-foreground" onClick={logout} aria-label="خروج">
                 <LogOut className="w-5 h-5" />

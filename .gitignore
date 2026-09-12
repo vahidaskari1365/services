@@ -52,3 +52,26 @@ prompt
 server.log
 # Skills directory
 /skills/
+# ==== MEP-PMS project exclusions ====
+# local database (rebuild with: bun run db:push && bun run db:seed)
+/db/
+# user uploads & generated deliverables
+/upload/
+/download/
+# sandbox infrastructure & internal notes
+/.zscripts/
+/tests/
+/worklog.md
+/agent-ctx/
+# external skill repos (used as reference only)
+/external-skills/
+/skills/
+/ai-engineering-hub
+/freellmapi
+/mattpocock-skills
+/ui-ux-pro-max-skill
+# scaffold demos
+/examples/
+/mini-services/
+# allow example env
+!.env.example

@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+  // Prisma نباید داخل باندل سرورلیس قرار بگیرد (اشکال رایج روی Vercel)
+  serverExternalPackages: ["@prisma/client", "prisma"],
 };
 
 export default nextConfig;
