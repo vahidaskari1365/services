@@ -32,6 +32,8 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased bg-background text-foreground font-vazir">
+        {/* جهت RTL برای همه کامپوننت‌های Radix مستقیماً در src/components/ui/*.tsx تنظیم شده
+            (پکیج @radix-ui/react-direction@1.1.1 بیلد CJS خراب دارد) */}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

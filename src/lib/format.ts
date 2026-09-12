@@ -2,7 +2,9 @@
 
 export function faNumber(n: number | null | undefined, digits = 0): string {
   if (n === null || n === undefined || isNaN(n)) return "—";
-  return n.toLocaleString("fa-IR", { maximumFractionDigits: digits, minimumFractionDigits: 0 });
+  const s = n.toLocaleString("fa-IR", { maximumFractionDigits: digits, minimumFractionDigits: 0 });
+  // برای اعداد منفی، علامت منفی در متن RTL جابه‌جا می‌شود؛ با LRM (U+200E) سمت درست حفظ می‌شود
+  return n < 0 ? `\u200E${s}` : s;
 }
 
 export function faMoney(n: number | null | undefined): string {
