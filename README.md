@@ -45,10 +45,12 @@ bun run dev                 # http://localhost:3000
 2. از منوی کنار **SQL Editor** را باز کنید و **New query** بزنید.
 3. کل محتوای فایل [`supabase/schema.sql`](supabase/schema.sql) را paste کنید و **Run** بزنید.
    - ✅ ۳۲ جدول + کلیدهای خارجی + ایندکس‌ها + Row Level Security ساخته می‌شود.
-4. (اختیاری — داده دمو روی ساپابیس) با رشته اتصال مستقیم:
+4. تمام! 🎉 **داده‌های دمو خودکار ساخته می‌شوند** — در اولین لاگین، اگر دیتابیس خالی باشد،
+   سیستم به‌صورت خودکار کاربران دمو و داده‌های نمونه را می‌سازد (Auto-Seed).
+   - اگر بازهم خواستید دستی سید کنید:
    ```bash
    DATABASE_URL="postgresql://postgres.kioqbtldumiuwkfdclhn:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres" \
-   bun run db:push:pg && bunx prisma generate --schema prisma/schema.postgres.prisma && bun run db:seed
+   bunx prisma generate --schema prisma/schema.postgres.prisma && bun scripts/seed.ts
    ```
 
 > 🔒 RLS فعال است: دسترسی REST با کلید publishable بسته و فقط `service_role` و اتصال مستقیم Prisma دسترسی دارند.

@@ -5,7 +5,7 @@
  */
 const { execSync } = require("child_process");
 
-const url = process.env.DATABASE_URL || "";
+const url = process.env.DATABASE_URL || process.env.POSTGRES_URL || "";
 const isPostgres = url.startsWith("postgres") || url.startsWith("postgresql");
 
 const cmd = isPostgres

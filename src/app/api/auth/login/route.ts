@@ -3,12 +3,32 @@ import { db } from "@/lib/db";
 import { verifyPassword, createToken, SESSION_COOKIE } from "@/lib/auth";
 import { DEFAULT_VIEW_BY_ROLE } from "@/lib/rbac";
 import { audit } from "@/lib/api-helpers";
+import { ensureSeeded } from "@/lib/seed";
+
+/** پیام راهنما وقتی تیبل‌ها هنوز در دیتابیس ساخته نشده‌اند */
+function isMissingTableError(e: unknown): boolean {
+  const err = e as { code?: string; message?: string };
+  if (err?.code === "P2021" || err?.code === "P1001" || err?.code === "P2022") return true;
+  return typeof err?.message === "string" && /does not exist|relation .* does not exist|Can't reach database/i.test(err.message);
+}
 
 export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json();
     if (!username || !password) {
       return NextResponse.json({ error: "نام کاربری و رمز عبور الزامی است" }, { status: 400 });
+    }
+    // اگر دیتابیس خالی باشد، داده‌های دمو خودکار ساخته می‌شوند (فقط بار اول)
+    try {
+      await ensureSeeded(db);
+    } catch (seedErr) {
+      console.error("ensureSeeded failed:", seedErr);
+      if (isMissingTableError(seedErr)) {
+        return NextResponse.json(
+          { error: "دیتابیس هنوز نصب نشده است — فایل supabase/schema.sql را در SQL Editor ساپابیس اجرا کنید", setupRequired: true },
+          { status: 503 }
+        );
+      }
     }
     const user = await db.user.findUnique({
       where: { username: String(username).trim().toLowerCase() },
@@ -54,6 +74,12 @@ export async function POST(req: NextRequest) {
     return res;
   } catch (e) {
     console.error("login error", e);
+    if (isMissingTableError(e)) {
+      return NextResponse.json(
+        { error: "دیتابیس هنوز نصب نشده است — فایل supabase/schema.sql را در SQL Editor ساپابیس اجرا کنید", setupRequired: true },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: "خطای سرور" }, { status: 500 });
   }
 }
