@@ -24,9 +24,34 @@ interface AppState {
   setUser: (u: UserInfo | null) => void;
   loadUser: () => Promise<void>;
   login: (username: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  demoLogin: (roleKey: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => Promise<void>;
   setPayToken: (t: string | null) => void;
   can: (permission: string) => boolean;
+}
+
+// توکن در localStorage — برای محیط‌هایی که کوکی بلاک می‌شود (iframe پیش‌نمایش چت)
+const TOKEN_KEY = "mep_token";
+
+export function authHeaders(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  const t = window.localStorage.getItem(TOKEN_KEY);
+  return t ? { "x-session-token": t } : {};
+}
+
+function saveToken(token?: string) {
+  if (typeof window !== "undefined" && token) window.localStorage.setItem(TOKEN_KEY, token);
+}
+
+function clearToken() {
+  if (typeof window !== "undefined") window.localStorage.removeItem(TOKEN_KEY);
+}
+
+interface AuthResponse {
+  ok: boolean;
+  token?: string;
+  user?: UserInfo;
+  error?: string;
 }
 
 export const useApp = create<AppState>((set, get) => ({
@@ -39,7 +64,7 @@ export const useApp = create<AppState>((set, get) => ({
   setPayToken: (t) => set({ payToken: t }),
   loadUser: async () => {
     try {
-      const res = await fetch("/api/auth/me");
+      const res = await fetch("/api/auth/me", { headers: authHeaders() });
       if (res.ok) {
         const data = await res.json();
         set({ user: data.user, authLoading: false, view: data.user.defaultView || "dashboard" });
@@ -57,8 +82,27 @@ export const useApp = create<AppState>((set, get) => ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
-      const data = await res.json();
-      if (res.ok) {
+      const data: AuthResponse = await res.json();
+      if (res.ok && data.user) {
+        saveToken(data.token);
+        set({ user: data.user, view: data.user.defaultView || "dashboard" });
+        return { ok: true };
+      }
+      return { ok: false, error: data.error };
+    } catch {
+      return { ok: false, error: "خطای اتصال به سرور" };
+    }
+  },
+  demoLogin: async (roleKey) => {
+    try {
+      const res = await fetch("/api/auth/demo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roleKey }),
+      });
+      const data: AuthResponse = await res.json();
+      if (res.ok && data.user) {
+        saveToken(data.token);
         set({ user: data.user, view: data.user.defaultView || "dashboard" });
         return { ok: true };
       }
@@ -68,7 +112,8 @@ export const useApp = create<AppState>((set, get) => ({
     }
   },
   logout: async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/logout", { method: "POST", headers: authHeaders() });
+    clearToken();
     set({ user: null, view: "dashboard" });
   },
   can: (permission) => {
@@ -79,7 +124,7 @@ export const useApp = create<AppState>((set, get) => ({
 
 export async function api<T = unknown>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders(), ...(options?.headers || {}) },
     ...options,
   });
   const data = await res.json();

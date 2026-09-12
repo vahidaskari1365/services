@@ -6,23 +6,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Loader2, ShieldCheck } from "lucide-react";
+import { Building2, Loader2, ShieldCheck, Zap } from "lucide-react";
 
-const DEMO_ACCOUNTS = [
-  { username: "manager", label: "مدیر", desc: "داشبورد BI و تأیید نهایی" },
-  { username: "secretary", label: "منشی", desc: "کارتابل ارجاعات و تماس" },
-  { username: "supervisor", label: "سرپرست کارگاه", desc: "وظایف موبایل و تراز مصالح" },
-  { username: "accountant", label: "حسابدار", desc: "مالی و همگام‌سازی" },
-  { username: "marketer", label: "بازاریاب", desc: "وضعیت پورسانت" },
-  { username: "team", label: "اکیپ اجرایی", desc: "قرارداد و تسویه" },
+const DEMO_ROLES = [
+  { roleKey: "MANAGER", label: "مدیر", desc: "داشبورد BI و تأیید نهایی" },
+  { roleKey: "SECRETARY", label: "منشی", desc: "کارتابل ارجاعات و تماس" },
+  { roleKey: "SUPERVISOR", label: "سرپرست کارگاه", desc: "وظایف موبایل و تراز مصالح" },
+  { roleKey: "ACCOUNTANT", label: "حسابدار", desc: "مالی و همگام‌سازی" },
+  { roleKey: "MARKETER", label: "بازاریاب", desc: "وضعیت پورسانت" },
+  { roleKey: "TEAM", label: "اکیپ اجرایی", desc: "قرارداد و تسویه" },
 ];
 
 export default function LoginView() {
   const login = useApp((s) => s.login);
+  const demoLogin = useApp((s) => s.demoLogin);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [demoRole, setDemoRole] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,6 +32,14 @@ export default function LoginView() {
     setLoading(true);
     const res = await login(username, password);
     setLoading(false);
+    if (!res.ok) setError(res.error || "خطا");
+  }
+
+  async function handleDemo(roleKey: string) {
+    setError("");
+    setDemoRole(roleKey);
+    const res = await demoLogin(roleKey);
+    setDemoRole("");
     if (!res.ok) setError(res.error || "خطا");
   }
 
@@ -75,34 +85,64 @@ export default function LoginView() {
         <Card className="border-0 shadow-2xl">
           <CardHeader className="text-center pb-2">
             <CardTitle className="text-xl font-bold">ورود به سامانه</CardTitle>
-            <CardDescription>حساب دمو را انتخاب کنید یا دستی وارد شوید</CardDescription>
+            <CardDescription>فقط نقش را انتخاب کنید — بدون رمز وارد شوید</CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="mb-2 flex items-center justify-center gap-1.5 text-emerald-700 dark:text-emerald-400">
+              <Zap className="w-4 h-4" />
+              <span className="text-sm font-bold">ورود فوری نمایشی (بدون رمز)</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {DEMO_ROLES.map((a) => (
+                <button
+                  key={a.roleKey}
+                  type="button"
+                  disabled={demoRole !== ""}
+                  onClick={() => handleDemo(a.roleKey)}
+                  className="text-right rounded-xl border p-2.5 hover:border-emerald-400 hover:bg-emerald-500/10 transition-colors disabled:opacity-60"
+                >
+                  <span className="flex items-center justify-between">
+                    <span className="text-xs font-semibold">{a.label}</span>
+                    {demoRole === a.roleKey && <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />}
+                  </span>
+                  <span className="block text-[10px] text-muted-foreground mt-0.5">{a.desc}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className="my-4 flex items-center gap-3">
+              <span className="h-px flex-1 bg-border" />
+              <span className="text-[10px] text-muted-foreground">ورود دستی با نام کاربری و رمز</span>
+              <span className="h-px flex-1 bg-border" />
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">نام کاربری</Label>
-                <Input
-                  id="username"
-                  dir="ltr"
-                  className="text-left"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="manager"
-                  autoComplete="username"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">رمز عبور</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  dir="ltr"
-                  className="text-left"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="1234"
-                  autoComplete="current-password"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="username">نام کاربری</Label>
+                  <Input
+                    id="username"
+                    dir="ltr"
+                    className="text-left"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="manager"
+                    autoComplete="username"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">رمز عبور</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    dir="ltr"
+                    className="text-left"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="1234"
+                    autoComplete="current-password"
+                  />
+                </div>
               </div>
               {error && <p className="text-sm text-rose-600 dark:text-rose-400 bg-rose-500/10 rounded-lg px-3 py-2">{error}</p>}
               <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
@@ -110,26 +150,6 @@ export default function LoginView() {
                 ورود
               </Button>
             </form>
-
-            <div className="mt-6">
-              <p className="text-xs text-muted-foreground mb-2 text-center">ورود سریع با حساب‌های نمایشی (رمز همه: ۱۲۳۴)</p>
-              <div className="grid grid-cols-2 gap-2">
-                {DEMO_ACCOUNTS.map((a) => (
-                  <button
-                    key={a.username}
-                    type="button"
-                    onClick={() => {
-                      setUsername(a.username);
-                      setPassword("1234");
-                    }}
-                    className="text-right rounded-xl border p-2.5 hover:border-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                  >
-                    <span className="block text-xs font-semibold">{a.label}</span>
-                    <span className="block text-[10px] text-muted-foreground mt-0.5">{a.desc}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { db } from "@/lib/db";
 
 const SECRET = process.env.AUTH_SECRET || "mep-pms-dev-secret-key-2025";
@@ -53,7 +53,15 @@ export function parseToken(token: string | undefined | null): SessionUser | null
 
 export async function getSession(): Promise<SessionUser | null> {
   const store = await cookies();
-  return parseToken(store.get(SESSION_COOKIE)?.value);
+  const fromCookie = store.get(SESSION_COOKIE)?.value;
+  if (fromCookie) return parseToken(fromCookie);
+  // فال‌بک هدر توکن — برای محیط‌هایی که کوکی بلاک می‌شود (مثل iframe پیش‌نمایش چت)
+  try {
+    const h = await headers();
+    return parseToken(h.get("x-session-token") || undefined);
+  } catch {
+    return null;
+  }
 }
 
 export async function requireSession(): Promise<SessionUser> {

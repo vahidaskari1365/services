@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/s
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { api } from "./store";
+import { api, authHeaders } from "./store";
 import { formatJalali } from "@/lib/jalali";
 import { ThemeToggle } from "./theme-toggle";
 import {
@@ -68,7 +68,7 @@ function NotificationsBell() {
   }, []);
 
   async function markRead() {
-    await fetch("/api/notifications", { method: "PATCH" });
+    await fetch("/api/notifications", { method: "PATCH", headers: authHeaders() });
     load();
   }
 
