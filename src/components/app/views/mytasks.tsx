@@ -99,7 +99,7 @@ export default function MyTasksView() {
                 </div>
                 <p className="text-sm font-bold mt-2">{t.title}</p>
                 {t.description && <p className="text-xs text-muted-foreground mt-1 leading-5">{t.description}</p>}
-                <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground">
+                <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground flex-wrap">
                   <span className="inline-flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5" /> {t.project.name} ({t.project.serviceLine?.name || "—"})
                   </span>
@@ -233,7 +233,7 @@ function WorklogDialog({ task, projects, teams, onClose, onSaved }: {
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>ثبت کارکرد و اقدام</DialogTitle>
         </DialogHeader>
@@ -377,7 +377,7 @@ function BalanceDialog({ project, onClose, onSaved }: { project: ProjectOpt; onC
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>ثبت گزارش تراز مصالح</DialogTitle>
         </DialogHeader>

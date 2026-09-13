@@ -155,7 +155,7 @@ export default function SecretaryView() {
 
       {/* دیالوگ نتیجه تماس */}
       <Dialog open={!!callTarget} onOpenChange={(o) => !o && setCallTarget(null)}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Phone className="w-5 h-5 text-emerald-600" /> ثبت نتیجه تماس

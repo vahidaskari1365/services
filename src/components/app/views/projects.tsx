@@ -504,7 +504,7 @@ function CreateProjectDialog({ persons, lines, onCreated }: { persons: PersonOpt
         <Plus className="w-4 h-4 ml-1" /> پروژه جدید
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2"><FolderKanban className="w-5 h-5 text-emerald-600" /> ایجاد پروژه جدید</DialogTitle>
           </DialogHeader>
@@ -642,7 +642,7 @@ function CreateContractDialog({ projectId, persons, onCreated }: { projectId: st
         <Plus className="w-4 h-4 ml-1" /> قرارداد جدید
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>ایجاد قرارداد</DialogTitle>
           </DialogHeader>
@@ -758,7 +758,7 @@ function AddPhaseDialog({ projectId, onDone }: { projectId: string; onDone: () =
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}><Plus className="w-3.5 h-3.5 ml-1" /> مرحله جدید</Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-sm">
           <DialogHeader><DialogTitle>افزودن مرحله اجرا</DialogTitle></DialogHeader>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="عنوان مرحله…" />
           <DialogFooter>
@@ -808,7 +808,7 @@ function AddTaskDialog({ projectId, contracts, persons, onDone }: { projectId: s
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}><Plus className="w-3.5 h-3.5 ml-1" /> وظیفه جدید</Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>ایجاد وظیفه و تخصیص به سرپرست</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">

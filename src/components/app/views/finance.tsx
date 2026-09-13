@@ -263,7 +263,7 @@ export default function FinanceView() {
 
       {/* دیالوگ وصولی دستی */}
       <Dialog open={!!manualTarget} onOpenChange={(o) => !o && setManualTarget(null)}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>ثبت وصولی دستی</DialogTitle>
           </DialogHeader>

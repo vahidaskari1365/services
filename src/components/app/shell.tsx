@@ -89,7 +89,7 @@ function NotificationsBell() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 p-0">
+      <PopoverContent align="end" className="w-[min(20rem,calc(100vw-1.5rem))] p-0">
         <div className="flex items-center justify-between px-3 py-2.5 border-b">
           <span className="text-sm font-semibold">اعلان‌ها</span>
           {unread > 0 && (
@@ -116,7 +116,7 @@ function NotificationsBell() {
   );
 }
 
-function NavLinks({ onNavigate, compact }: { onNavigate?: () => void; compact?: boolean }) {
+function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const { view, setView, can, user } = useApp();
   const items = NAV_ITEMS.filter((i) => can(i.permission));
   return (
@@ -138,11 +138,11 @@ function NavLinks({ onNavigate, compact }: { onNavigate?: () => void; compact?: 
             }`}
           >
             <Icon className="w-4.5 h-4.5 shrink-0" />
-            {!compact && <span>{item.label}</span>}
+            <span className="whitespace-nowrap">{item.label}</span>
           </button>
         );
       })}
-      {user && !compact && (
+      {user && (
         <>
           <Separator className="my-3 bg-sidebar-border" />
           <div className="px-3 py-2">
@@ -157,7 +157,7 @@ function NavLinks({ onNavigate, compact }: { onNavigate?: () => void; compact?: 
 }
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const { user, logout, setView } = useApp();
+  const { user, logout, setView, view } = useApp();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   if (!user) return null;
@@ -194,8 +194,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       {/* محتوای اصلی */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-30 bg-background/85 backdrop-blur border-b">
-          <div className="flex items-center justify-between gap-3 px-4 py-3">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-1.5 sm:gap-3 px-2.5 sm:px-4 py-2.5 sm:py-3">
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
               {/* منوی موبایل */}
               <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
                 <SheetTrigger asChild>
@@ -203,24 +203,40 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     <Menu className="w-5 h-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-72 bg-sidebar text-sidebar-foreground p-0">
+                <SheetContent side="right" className="w-[min(19rem,85vw)] bg-sidebar text-sidebar-foreground p-0 flex flex-col">
                   <SheetTitle className="sr-only">منوی ناوبری</SheetTitle>
-                  <div className="flex items-center gap-2.5 px-4 py-5">
-                    <Wrench className="w-5 h-5 text-emerald-300" />
-                    <p className="font-extrabold text-sm">مپ‌پی‌ام‌اس</p>
+                  <div className="flex items-center gap-2.5 px-4 py-4 shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-emerald-300" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-extrabold text-sm">مپ‌پی‌ام‌اس</p>
+                      <p className="text-[10px] text-sidebar-foreground/60 truncate">{user.tenantName}</p>
+                    </div>
                   </div>
-                  <ScrollArea className="h-[calc(100vh-80px)] px-2 pb-4">
-                    <NavLinks compact onNavigate={() => setMobileOpen(false)} />
+                  <ScrollArea className="flex-1 min-h-0 px-2 pb-2">
+                    <NavLinks onNavigate={() => setMobileOpen(false)} />
                   </ScrollArea>
+                  <div className="shrink-0 p-3 border-t border-sidebar-border">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium truncate">{user.fullName}</p>
+                        <p className="text-[10px] text-sidebar-foreground/60" dir="ltr">@{user.username}</p>
+                      </div>
+                      <Button variant="ghost" size="icon" className="text-sidebar-foreground/70 hover:text-sidebar-foreground" onClick={logout} aria-label="خروج">
+                        <LogOut className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </SheetContent>
               </Sheet>
-              <div>
-                <h1 className="text-sm sm:text-base font-bold">
-                  {NAV_ITEMS.find((n) => n.key === useApp.getState().view)?.label || "مپ‌پی‌ام‌اس"}
+              <div className="min-w-0">
+                <h1 className="text-sm sm:text-base font-bold truncate">
+                  {NAV_ITEMS.find((n) => n.key === view)?.label || "مپ‌پی‌ام‌اس"}
                 </h1>
               </div>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-0.5 sm:gap-1.5 shrink-0">
               <ThemeToggle />
               <BrowserNotifications />
               <NotificationsBell />

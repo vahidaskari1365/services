@@ -224,7 +224,7 @@ function CreatePersonDialog({ onCreated }: { onCreated: () => void }) {
         <Plus className="w-4 h-4 ml-1" /> شخص جدید
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>ثبت شخص جدید</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">
@@ -306,7 +306,7 @@ function CreateTeamDialog({ persons, onCreated }: { persons: PersonRow[]; onCrea
         <Plus className="w-4 h-4 ml-1" /> اکیپ جدید
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>ایجاد اکیپ اجرایی</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">
@@ -383,7 +383,7 @@ function CreateCheckDialog({ persons, onCreated }: { persons: PersonRow[]; onCre
         <Plus className="w-4 h-4 ml-1" /> ثبت چک ضمانت
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>ثبت چک ضمانت حسن انجام کار</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">

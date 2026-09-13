@@ -204,7 +204,7 @@ export default function DashboardView() {
                   <p className="text-xs font-semibold">{p.name}</p>
                   <StatusBadge status={p.status} />
                 </div>
-                <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground">
+                <div className="flex items-center gap-x-3 gap-y-1 mt-2 text-[11px] text-muted-foreground flex-wrap">
                   <Badge variant="outline" className="text-[10px]">{p.serviceLine}</Badge>
                   <span>{faNumber(p.contractCount)} قرارداد ({faMoneyShort(p.contractAmount)})</span>
                   <span>کارها: {faNumber(p.doneTasks)}/{faNumber(p.taskCount)}</span>

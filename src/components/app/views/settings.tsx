@@ -168,12 +168,12 @@ export default function SettingsView() {
           >
             <div className="space-y-2">
               {tiers.map((t, i) => (
-                <div key={t.id} className="grid grid-cols-12 gap-2 items-center">
-                  <Input className="col-span-4" placeholder="برچسب پله" value={t.label} onChange={(e) => setTiers(tiers.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} />
-                  <Input className="col-span-3" dir="ltr" placeholder="از مبلغ" value={t.minAmount} onChange={(e) => setTiers(tiers.map((x, j) => (j === i ? { ...x, minAmount: Number(e.target.value) || 0 } : x)))} />
-                  <Input className="col-span-3" dir="ltr" placeholder="تا مبلغ (خالی=بی‌نهایت)" value={t.maxAmount ?? ""} onChange={(e) => setTiers(tiers.map((x, j) => (j === i ? { ...x, maxAmount: e.target.value === "" ? null : Number(e.target.value) } : x)))} />
-                  <Input className="col-span-1" dir="ltr" placeholder="٪" value={t.percent} onChange={(e) => setTiers(tiers.map((x, j) => (j === i ? { ...x, percent: Number(e.target.value) || 0 } : x)))} />
-                  <Button variant="ghost" size="icon" className="col-span-1" onClick={() => setTiers(tiers.filter((_, j) => j !== i))} aria-label="حذف پله">
+                <div key={t.id} className="grid grid-cols-2 sm:grid-cols-12 gap-2 items-center">
+                  <Input className="col-span-2 sm:col-span-4" placeholder="برچسب پله" value={t.label} onChange={(e) => setTiers(tiers.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} />
+                  <Input className="col-span-1 sm:col-span-3" dir="ltr" placeholder="از مبلغ" value={t.minAmount} onChange={(e) => setTiers(tiers.map((x, j) => (j === i ? { ...x, minAmount: Number(e.target.value) || 0 } : x)))} />
+                  <Input className="col-span-1 sm:col-span-3" dir="ltr" placeholder="تا مبلغ (خالی=بی‌نهایت)" value={t.maxAmount ?? ""} onChange={(e) => setTiers(tiers.map((x, j) => (j === i ? { ...x, maxAmount: e.target.value === "" ? null : Number(e.target.value) } : x)))} />
+                  <Input className="col-span-1 sm:col-span-1" dir="ltr" placeholder="٪" value={t.percent} onChange={(e) => setTiers(tiers.map((x, j) => (j === i ? { ...x, percent: Number(e.target.value) || 0 } : x)))} />
+                  <Button variant="ghost" size="icon" className="col-span-1 sm:col-span-1" onClick={() => setTiers(tiers.filter((_, j) => j !== i))} aria-label="حذف پله">
                     <Trash2 className="w-3.5 h-3.5 text-rose-500" />
                   </Button>
                 </div>

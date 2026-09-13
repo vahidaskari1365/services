@@ -244,7 +244,7 @@ export default function DocumentsView() {
         </AlertDialogContent>
       </AlertDialog>
       <Dialog open={!!preview} onOpenChange={(o) => { if (!o && preview) { URL.revokeObjectURL(preview.url); setPreview(null); } }}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-3xl">
           <DialogHeader><DialogTitle className="text-sm">{preview?.title}</DialogTitle></DialogHeader>
           {preview && (
             <div className="max-h-[65vh] overflow-auto rounded-xl border bg-muted/30">
@@ -313,7 +313,7 @@ function UploadDialog({ open, onOpenChange, projects, onUploaded }: { open: bool
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-md">
         <DialogHeader><DialogTitle>بارگذاری سند جدید</DialogTitle></DialogHeader>
         <div className="space-y-3.5 py-1">
           <label className="flex flex-col items-center gap-2 rounded-xl border border-dashed p-5 cursor-pointer hover:bg-muted/50 transition-colors">
@@ -394,7 +394,7 @@ function EditDialog({ doc, onClose, onSaved }: { doc: DocRow | null; onClose: ()
 
   return (
     <Dialog open={!!doc} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-[calc(100%-2rem)] sm:max-w-sm">
         <DialogHeader><DialogTitle>ویرایش سند</DialogTitle></DialogHeader>
         <div className="space-y-3 py-1">
           <div className="space-y-1.5">

@@ -92,7 +92,7 @@ export default function LoginView() {
               <Zap className="w-4 h-4" />
               <span className="text-sm font-bold">ورود فوری نمایشی (بدون رمز)</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {DEMO_ROLES.map((a) => (
                 <button
                   key={a.roleKey}
@@ -117,7 +117,7 @@ export default function LoginView() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label htmlFor="username">نام کاربری</Label>
                   <Input
