@@ -60,6 +60,10 @@ export async function seedDatabase(db: PrismaClient) {
     ["escalations.handle", "ثبت نتیجه تماس", "پیگیری"],
     ["settings.manage", "مدیریت تنظیمات", "تنظیمات"],
     ["settings.roles", "مدیریت نقش‌ها و دسترسی", "تنظیمات"],
+    ["users.manage", "مدیریت کاربران (ایجاد، نقش، فعال/غیرفعال)", "کاربران"],
+    ["reports.build", "گزارش‌ساز و خروجی اکسل/CSV/چاپ", "گزارش‌ها"],
+    ["documents.view", "مشاهده و دریافت آرشیو اسناد", "اسناد"],
+    ["documents.manage", "بارگذاری و حذف اسناد", "اسناد"],
   ];
 
   const permissions: Record<string, { id: string }> = {};
@@ -69,9 +73,9 @@ export async function seedDatabase(db: PrismaClient) {
 
   const roleSeeds: [string, string, string, string[]][] = [
     ["MANAGER", "مدیر", "کنترل کامل سیستم؛ تأیید نهایی مالی؛ گزارش سود و زیان", permCatalog.map((p) => p[0])],
-    ["SECRETARY", "منشی", "کارتابل ارجاعات، ثبت نتیجه تماس، پیگیری اقساط", ["dashboard.view", "persons.view", "teams.view", "projects.view", "contracts.view", "tasks.viewAll", "escalations.view", "escalations.handle", "finance.view"]],
-    ["SUPERVISOR", "سرپرست کارگاه", "نمای موبایل وظایف، ثبت کارکرد و تراز مصالح با شواهد", ["tasks.own", "worklogs.create", "material.balance", "material.view", "projects.view", "persons.view"]],
-    ["ACCOUNTANT", "حسابدار", "ماژول مالی، همگام‌سازی حسابفاری، خروجی اسناد", ["dashboard.view", "finance.manage", "finance.view", "payments.link", "commissions.view", "accounting.sync", "reports.pnl", "projects.view", "contracts.view", "persons.view"]],
+    ["SECRETARY", "منشی", "کارتابل ارجاعات، ثبت نتیجه تماس، پیگیری اقساط", ["dashboard.view", "persons.view", "teams.view", "projects.view", "contracts.view", "tasks.viewAll", "escalations.view", "escalations.handle", "finance.view", "reports.build", "documents.view", "documents.manage"]],
+    ["SUPERVISOR", "سرپرست کارگاه", "نمای موبایل وظایف، ثبت کارکرد و تراز مصالح با شواهد", ["tasks.own", "worklogs.create", "material.balance", "material.view", "projects.view", "persons.view", "documents.view"]],
+    ["ACCOUNTANT", "حسابدار", "ماژول مالی، همگام‌سازی حسابفاری، خروجی اسناد", ["dashboard.view", "finance.manage", "finance.view", "payments.link", "commissions.view", "accounting.sync", "reports.pnl", "reports.build", "documents.view", "documents.manage", "projects.view", "contracts.view", "persons.view"]],
     ["MARKETER", "بازاریاب", "پروژه‌های خودش و وضعیت پورسانت", ["projects.view", "contracts.view", "commissions.view", "persons.view"]],
     ["TEAM", "اکیپ اجرایی", "مشاهده قرارداد و تسویه خود، ثبت مستندات", ["contracts.view", "projects.view", "finance.view"]],
   ];

@@ -13,6 +13,9 @@ import FinanceView from "@/components/app/views/finance";
 import SecretaryView from "@/components/app/views/secretary";
 import CommissionsView from "@/components/app/views/commissions";
 import ReportsView from "@/components/app/views/reports";
+import ReportBuilderView from "@/components/app/views/report-builder";
+import DocumentsView from "@/components/app/views/documents";
+import UsersView from "@/components/app/views/users";
 import SettingsView from "@/components/app/views/settings";
 import { Skeleton } from "@/components/ui/skeleton";
 import PaymentModal from "@/components/app/views/payment-modal";
@@ -54,6 +57,9 @@ export default function Home() {
         {view === "secretary" && <SecretaryView />}
         {view === "commissions" && <CommissionsView />}
         {view === "reports" && <ReportsView />}
+        {view === "builder" && <ReportBuilderView />}
+        {view === "documents" && <DocumentsView />}
+        {view === "users" && <UsersView />}
         {view === "settings" && <SettingsView />}
       </AppShell>
       {payToken && <PaymentModal token={payToken} onClose={() => setPayToken(null)} />}

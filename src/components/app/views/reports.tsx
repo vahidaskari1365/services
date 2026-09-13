@@ -6,6 +6,7 @@ import { CardBlock, EmptyState, SectionTitle, LoadingCards } from "../shared";
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { faMoneyShort, faNumber, faPercent } from "@/lib/format";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import ExportButtons from "../export-buttons";
 
 interface PnlRow { projectId: string; project: string; serviceLine: string; revenue: number; wages: number; commission: number; profit: number; margin: number }
 interface LineRow { line: string; revenue: number; wages: number; commission: number; profit: number }
@@ -37,11 +38,39 @@ export default function ReportsView() {
     سود: r.profit,
   }));
 
+  const exportCols = [
+    { key: "project", label: "پروژه", type: "text" as const },
+    { key: "serviceLine", label: "رسته کاری", type: "text" as const },
+    { key: "revenue", label: "درآمد (ریال)", type: "money" as const },
+    { key: "wages", label: "دستمزد (ریال)", type: "money" as const },
+    { key: "commission", label: "پورسانت (ریال)", type: "money" as const },
+    { key: "profit", label: "سود (ریال)", type: "money" as const },
+    { key: "margin", label: "حاشیه سود (٪)", type: "number" as const },
+  ];
+  const exportRows = data.byProject.map((r) => ({
+    project: r.project,
+    serviceLine: r.serviceLine,
+    revenue: r.revenue,
+    wages: r.wages,
+    commission: r.commission,
+    profit: r.profit,
+    margin: r.margin,
+  }));
+
   return (
     <div className="space-y-5">
       <SectionTitle
         title="گزارش تحلیلی سود و زیان"
         desc="به تفکیک پروژه، رسته کاری و بازاریاب — خروجی استاندارد برای حسابداری"
+        action={
+          <ExportButtons
+            title="سود و زیان به تفکیک پروژه"
+            subtitle="خروجی استاندارد حسابداری — مبالغ به ریال"
+            cols={exportCols}
+            rows={exportRows}
+            fileName="pnl-report"
+          />
+        }
       />
 
       {/* جمع کل */}

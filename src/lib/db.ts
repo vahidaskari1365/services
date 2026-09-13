@@ -31,6 +31,13 @@ function bootstrapDemoDatabase() {
     return;
   }
   try {
+    // حذف WAL/SHM باقی‌مانده از اجراهای قبلی — ترکیب WAL قدیمی با دیتابیس تازه
+    // باعث خرابی/بازگشت داده‌های قدیمی می‌شود
+    for (const side of [target + '-wal', target + '-shm']) {
+      if (fs.existsSync(side)) {
+        try { fs.rmSync(side); } catch { /* بی‌اهمیت */ }
+      }
+    }
     fs.copyFileSync(source, target);
     console.log(`[db] demo database ready: ${source} → ${target}`);
   } catch (e) {

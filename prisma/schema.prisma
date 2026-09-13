@@ -34,6 +34,7 @@ model User {
   person       Person?  @relation(fields: [personId], references: [id])
   notifications Notification[]
   auditLogs    AuditLog[]
+  documents    DocumentFile[] @relation("UserDocuments")
 }
 
 model Role {
@@ -80,6 +81,7 @@ model Person {
   tasksAssigned           Task[]           @relation("TaskAssignee")
   workLogsAsPerson        WorkLog[]        @relation("WorkLogPerson")
   commissions             Commission[]     @relation("CommissionMarketer")
+  documents               DocumentFile[]   @relation("PersonDocuments")
 }
 
 model GuaranteeCheck {
@@ -158,6 +160,7 @@ model Project {
   phases        Phase[]
   tasks         Task[]
   workLogs      WorkLog[]
+  documents     DocumentFile[] @relation("ProjectDocuments")
 }
 
 model Phase {
@@ -196,6 +199,7 @@ model Contract {
   workLogs      WorkLog[]
   payouts       Payout[]
   commissions   Commission[]
+  documents     DocumentFile[] @relation("ContractDocuments")
 }
 
 model ContractInstallment {
@@ -491,4 +495,26 @@ model AuditLog {
   meta      String   @default("{}")
   createdAt DateTime @default(now())
   user      User?    @relation(fields: [userId], references: [id])
+}
+
+// آرشیو اسناد — فایل‌ها به‌صورت base64 در دیتابیس (سازگار با SQLite دمو و Postgres تولیدی)
+model DocumentFile {
+  id           String   @id @default(cuid())
+  tenantId     String
+  title        String
+  fileName     String
+  mimeType     String   @default("application/octet-stream")
+  size         Int      @default(0)
+  category     String   @default("OTHER")
+  projectId    String?
+  contractId   String?
+  personId     String?
+  notes        String   @default("")
+  data         String   @default("")
+  uploadedById String?
+  createdAt    DateTime @default(now())
+  project   Project?  @relation("ProjectDocuments", fields: [projectId], references: [id])
+  contract  Contract? @relation("ContractDocuments", fields: [contractId], references: [id])
+  person    Person?   @relation("PersonDocuments", fields: [personId], references: [id])
+  uploader  User?     @relation("UserDocuments", fields: [uploadedById], references: [id])
 }

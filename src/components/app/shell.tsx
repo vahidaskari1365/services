@@ -11,9 +11,11 @@ import { Separator } from "@/components/ui/separator";
 import { api, authHeaders } from "./store";
 import { formatJalali } from "@/lib/jalali";
 import { ThemeToggle } from "./theme-toggle";
+import BrowserNotifications from "./browser-notifications";
 import {
   Bell, Building2, ClipboardCheck, FolderKanban, LayoutDashboard, LogOut, Menu,
   Settings2, Users, Wallet, FileBarChart2, ListTodo, Inbox, Percent, Wrench,
+  UserCog, FileSpreadsheet, Archive,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -34,6 +36,9 @@ const NAV_ITEMS: NavItem[] = [
   { key: "secretary", label: "کارتابل پیگیری", icon: Inbox, permission: "escalations.view" },
   { key: "commissions", label: "پورسانت من", icon: Percent, permission: "commissions.view" },
   { key: "reports", label: "گزارش سود و زیان", icon: FileBarChart2, permission: "reports.pnl" },
+  { key: "builder", label: "گزارش‌ساز", icon: FileSpreadsheet, permission: "reports.build" },
+  { key: "documents", label: "آرشیو اسناد", icon: Archive, permission: "documents.view" },
+  { key: "users", label: "مدیریت کاربران", icon: UserCog, permission: "users.manage" },
   { key: "settings", label: "تنظیمات", icon: Settings2, permission: "settings.manage" },
 ];
 
@@ -217,6 +222,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex items-center gap-1.5">
               <ThemeToggle />
+              <BrowserNotifications />
               <NotificationsBell />
               <Button variant="ghost" size="icon" className="lg:hidden text-muted-foreground" onClick={logout} aria-label="خروج">
                 <LogOut className="w-5 h-5" />

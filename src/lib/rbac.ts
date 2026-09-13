@@ -38,6 +38,13 @@ export const PERMISSION_CATALOG: { key: string; name: string; module: string }[]
   // تنظیمات
   { key: "settings.manage", name: "مدیریت تنظیمات، تعرفه و فرمول‌ها", module: "تنظیمات" },
   { key: "settings.roles", name: "مدیریت نقش‌ها و دسترسی‌ها", module: "تنظیمات" },
+  // مدیریت کاربران
+  { key: "users.manage", name: "مدیریت کاربران (ایجاد، نقش، فعال/غیرفعال)", module: "کاربران" },
+  // گزارش‌ساز و خروجی
+  { key: "reports.build", name: "گزارش‌ساز و خروجی اکسل/CSV/چاپ", module: "گزارش‌ها" },
+  // آرشیو اسناد
+  { key: "documents.view", name: "مشاهده و دریافت آرشیو اسناد", module: "اسناد" },
+  { key: "documents.manage", name: "بارگذاری و حذف اسناد", module: "اسناد" },
 ];
 
 export const DEFAULT_ROLE_MATRIX: Record<string, string[]> = {
@@ -52,8 +59,11 @@ export const DEFAULT_ROLE_MATRIX: Record<string, string[]> = {
     "escalations.view",
     "escalations.handle",
     "finance.view",
+    "reports.build",
+    "documents.view",
+    "documents.manage",
   ],
-  SUPERVISOR: ["tasks.own", "worklogs.create", "material.balance", "material.view", "projects.view", "persons.view"],
+  SUPERVISOR: ["tasks.own", "worklogs.create", "material.balance", "material.view", "projects.view", "persons.view", "documents.view"],
   ACCOUNTANT: [
     "dashboard.view",
     "finance.manage",
@@ -62,6 +72,9 @@ export const DEFAULT_ROLE_MATRIX: Record<string, string[]> = {
     "commissions.view",
     "accounting.sync",
     "reports.pnl",
+    "reports.build",
+    "documents.view",
+    "documents.manage",
     "projects.view",
     "contracts.view",
     "persons.view",
